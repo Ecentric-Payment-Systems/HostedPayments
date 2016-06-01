@@ -1,0 +1,8 @@
+﻿.body-content {
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+.navbar.navbar-default.navbar-fixed-top, .navbar.navbar-default.navbar-fixed-bottom {
+    z-index: 999;
+}

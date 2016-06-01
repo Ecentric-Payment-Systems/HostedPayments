@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "Manage Wallet with Angularjs";
+}
+
+
+<div class="well">
+    <h1>Ecentric Payments</h1>
+    <p class="lead">Code Sample for using the Ecentric Payment Lightbox</p>
+</div>
+
+
+<div class="col-xs-12" ng-controller="walletCtrl">
+    <form class="form-horizontal" method="post" name="walletForm" ng-submit="submit()">
+        <div class="form-group">
+            <label>User Unique Identifier</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <input class="form-control" required type="text" name="UserID" ng-model="wallet.UserID" />
+                        <span class="input-group-addon">clear</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input class="btn btn-primary" required type="submit" value="View Wallet" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="@EcentricHPP.Helpers.ConfigHelper.HPPLink()/api/js"></script>
+    <script type="text/javascript">
+        angular.module('payment')
+        .controller('walletCtrl', function ($scope, $http) {
+
+
+            function callbackFn(response) {
+                alert('success: check console.log')
+                console.dir(response);
+            }
+
+            $scope.wallet = {
+                UserID: '31315b31-274b-4ae6-8f57-79fcbe2dbbbd',
+            }
+
+            $scope.submit = function () {
+                $http.post('api/payment/getWalletRequest', $scope.wallet)
+                .success(function (response) {
+                    hpp.wallet(response, callbackFn);
+                })
+            }
+        })
+
+    </script>
+}
+
+
+
+

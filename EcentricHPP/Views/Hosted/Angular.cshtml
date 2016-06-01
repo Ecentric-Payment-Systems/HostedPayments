@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Hosted Payment using angularjs and MVC api Controller";
+}
+
+<div class="well">
+    <h1>Ecentric Payments</h1>
+    <p class="lead">Code Sample for using the Ecentric Payment Lightbox</p>
+</div>
+
+
+<div class="col-xs-12" ng-controller="paymentCtrl">
+    <form class="form-horizontal" method="post" name="paymentForm" ng-submit="submit()">
+        <div class="form-group">
+            <label>Amount</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <select name="Currency" ng-model="payment.Currency">
+                                <option value="ZAR" selected>ZAR</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </span>
+                        <input class="form-control" name="Amount" required type="number" step="0.01" ng-model="payment.Amount" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <ul class="list-unstyled">
+                        <li><span class="text-info">See documentation for list of Currencies</span></li>
+                        <li><span class="text-info">Amount passed to Ecentric should be in cents</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Transaction Type</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <select class="form-control" name="TransactionType" ng-model="payment.TransactionType">
+                        <option value="Payment">Payment</option>
+                        <option value="Authorize">Authorize</option>
+                    </select>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>User Unique Identifier <i>(Optional)</i></label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <input class="form-control" required type="text" name="UserID" ng-model="payment.UserID"/>
+                        <span class="input-group-addon">clear</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <p class="text-info">Optional field only used in tandem with the Ecentric Wallet</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input class="btn btn-primary" required type="submit" value="Pay using Hosted Payment Page" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        angular.module('payment')
+        .controller('paymentCtrl', function ($scope, $http, formPost) {
+            
+            //scope variable to bind to html
+            $scope.payment = {
+                Amount: 12.00,
+                UserID: '31315b31-274b-4ae6-8f57-79fcbe2dbbbd',
+                TransactionType: 'Payment',
+                Currency: 'ZAR'
+            }
+
+            //function to execute on form submit
+            $scope.submit = function () {
+                //get request information for request (basic)
+                $http.post('api/payment/getRequest', $scope.payment)
+                .success(function (response) {
+                    //add optional field to response if required.
+
+                    //post to Ecentric Payment page
+                    formPost(response, '@EcentricHPP.Helpers.ConfigHelper.HPPLink()');
+                })
+            }
+        })
+        .service('formPost', ['$document', '$window', function ($document, $window) {
+            //simple service to build form and post.
+            var that = this;
+            
+            //append input tag to form
+            function addInput(form, name, value) {
+                var input = angular.element('<input>').attr('type', 'hidden').attr('name', name);
+                input.val(value);
+                form.append(input);
+            }
+
+            this.post = function (object, url) {
+                var form = angular.element('<form></form>');
+                form.attr('method', 'post');
+                form.attr('enctype', 'application/x-www-form-urlencoded');
+                form.attr('action', url);
+                $document.find('body').append(form);
+
+                angular.forEach(object, function (value, prop) {
+                    if (angular.isArray(value)) {
+                        angular.forEach(value, function (val) {
+                            addInput(form, prop, val);
+                        });
+                    } else {
+                        addInput(form, prop, value);
+                    }
+                });
+
+                form[0].submit();
+            }
+
+            return that.post;
+        }]);
+    </script>
+}
+
+

@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Hosted Payment using jquery";
+}
+
+<div class="well">
+    <h1>Ecentric Payments</h1>
+    <p class="lead">Code Sample for using the Ecentric Payment Lightbox</p>
+</div>
+
+
+<div class="col-xs-12">
+    <form class="form-horizontal" method="post" action="">
+        <div class="form-group">
+            <label>Amount</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <select name="Currency">
+                                <option value="ZAR" selected>ZAR</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </span>
+                        <input class="form-control" name="Amount" required type="number" step="0.01" value="10.00" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <ul class="list-unstyled">
+                        <li><span class="text-info">See documentation for list of Currencies</span></li>
+                        <li><span class="text-info">Amount passed to Ecentric should be in cents</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Transaction Type</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <select class="form-control" name="TransactionType">
+                        <option value="Payment">Payment</option>
+                        <option value="Authorize">Authorize</option>
+                    </select>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>User Unique Identifier <i>(Optional)</i></label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <input class="form-control" required type="text" name="UserID" value="31315b31-274b-4ae6-8f57-79fcbe2dbbbd" />
+                        <span class="input-group-addon">clear</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <p class="text-info">Optional field only used in tandem with the Ecentric Wallet</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input class="btn btn-primary" required type="submit" value="Pay using Hosted Payment Page" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @System.Web.Optimization.Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+
+        $('form').submit(function (event) {
+
+            // get the form data
+            var formData = {
+                'Amount': $('input[name=Amount]').val(),
+                'Currency': $('select[name=Currency]').val(),
+                'TransactionType': $('select[name=TransactionType]').val(),
+                'UserID': $('input[name=UserID]').val()
+            };
+
+            //this api call exposes the getRequest service. Otherwise, use a direct post similar to old school form post to access the getRequest method privately.
+            $.ajax({
+                type: 'POST',
+                url: 'api/payment/getRequest',
+                data: formData,
+                dataType: 'json',
+                encode: true
+            })
+            .done(function (data) {
+                var formPost = '<form action="@EcentricHPP.Helpers.ConfigHelper.HPPLink()" method="post">';
+                for (var prop in data) {
+                    formPost += '<input type="hidden" name="' + prop + '" value="' + data[prop] + '">';
+                }
+                formPost += '</form>';
+
+                $(formPost).submit();
+            });
+
+            event.preventDefault();
+        });
+    </script>
+}
+
+

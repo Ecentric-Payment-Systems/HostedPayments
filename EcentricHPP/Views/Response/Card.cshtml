@@ -1,0 +1,33 @@
+﻿@model EcentricHPP.Models.CardResponse
+@{
+    ViewBag.Title = "Card Response";
+}
+<h2 class="text-primary">Card Response</h2>
+<table>
+    <tr>
+        <td><strong>UserId: </strong></td>
+        <td>@Model.UserID</td>
+    </tr>
+    <tr>
+        <td><strong>Status: </strong></td>
+        <td>@Model.Result</td>
+    </tr>
+    <tr>
+        <td><strong>Message: </strong></td>
+        <td>@Model.Message</td>
+    </tr>
+    <tr>
+        <td><strong>Token: </strong></td>
+        <td>@Model.Token</td>
+    </tr>
+    <tr>
+        <td><strong>Checksum Pass: </strong></td>
+        <td>@Model.isValidChecksum</td>
+    </tr>
+    <tr>
+        <td><strong>Response Checksum: </strong></td>
+        <td>@Model.Checksum</td>
+    </tr>
+
+</table>
+

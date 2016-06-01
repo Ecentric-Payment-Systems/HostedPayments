@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Add Card to Wallet with Angularjs";
+}
+
+
+<div class="well">
+    <h1>Ecentric Payments</h1>
+    <p class="lead">Code Sample for using the Ecentric Wallet</p>
+</div>
+
+
+<div class="col-xs-12" ng-controller="walletCtrl">
+    <form class="form-horizontal" method="post" name="walletForm" ng-submit="submit()">
+        <div class="form-group">
+            <label>User Unique Identifier</label>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="input-group">
+                        <input class="form-control" required type="text" name="UserID" ng-model="wallet.UserID" />
+                        <span class="input-group-addon">clear</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <input class="btn btn-primary" required type="submit" value="Add Card" />
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        angular.module('payment')
+        .controller('walletCtrl', function ($scope, $http, formPost) {
+
+
+            function callbackFn(response) {
+                alert('Wallet Closed')
+                console.dir(response);
+            }
+
+            $scope.wallet = {
+                UserID: '31315b31-274b-4ae6-8f57-79fcbe2dbbbd',
+            }
+
+            $scope.submit = function () {
+                $http.post('api/payment/getWalletRequest', $scope.wallet)
+                .success(function (response) {
+                    formPost(response, '@EcentricHPP.Helpers.ConfigHelper.HPPLink()/Wallet/AddCard');
+                })
+            }
+        })
+        .service('formPost', ['$document', '$window', function ($document, $window) {
+
+
+
+            var that = this;
+
+            function addInput(form, name, value) {
+                var input = angular.element('<input>').attr('type', 'hidden').attr('name', name);
+                input.val(value);
+                form.append(input);
+            }
+
+            this.post = function (object, url) {
+                var form = angular.element('<form></form>');
+                form.attr('method', 'post');
+                form.attr('enctype', 'application/x-www-form-urlencoded');
+                form.attr('action', url);
+                $document.find('body').append(form);
+
+                angular.forEach(object, function (value, prop) {
+                    if (angular.isArray(value)) {
+                        angular.forEach(value, function (val) {
+                            addInput(form, prop, val);
+                        });
+                    } else {
+                        addInput(form, prop, value);
+                    }
+                });
+
+                form[0].submit();
+            }
+
+            return that.post;
+        }]);
+
+    </script>
+}
+
+
+
+
+
+
+
+

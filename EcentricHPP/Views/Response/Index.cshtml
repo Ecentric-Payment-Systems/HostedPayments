@@ -1,0 +1,38 @@
+﻿@model EcentricHPP.Models.PaymentResponse
+@{
+    ViewBag.Title = "Payment Response";
+}
+
+<h2 class="text-primary">Payment Response</h2>
+<table>
+    <tr>
+        <td><strong>Merchant Reference: </strong></td>
+        <td>@Model.MerchantReference</td>
+    </tr>
+    <tr>
+        <td><strong>Amount: </strong></td>
+        <td>@Model.Amount</td>
+    </tr>
+    <tr>
+        <td><strong>Result: </strong></td>
+        <td>@Model.Result</td>
+    </tr>
+    <tr>
+        <td><strong>Message: </strong></td>
+        <td>@Model.FailureMessage</td>
+    </tr>
+    <tr>
+        <td><strong>TransactionID: </strong></td>
+        <td>@Model.TransactionID</td>
+    </tr>
+    <tr>
+        <td><strong>Checksum Pass: </strong></td>
+        <td>@Model.isValidChecksum</td>
+    </tr>
+    <tr>
+        <td><strong>Response Checksum: </strong></td>
+        <td>@Model.Checksum</td>
+    </tr>
+
+</table>
+
